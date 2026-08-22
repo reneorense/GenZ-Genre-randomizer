@@ -6,6 +6,92 @@ const RARITY_MAP = {
   'EXOTIC / CONTRABAND': { color: '#ffd700', bg: 'rgba(255, 215, 0, 0.18)', glow: 'rgba(255, 215, 0, 0.5)' }
 };
 
+/* =========================================================
+   PROCEDURAL SVG ARTWORK GENERATOR (OPTION 2)
+   ========================================================= */
+function generateProceduralArtwork(genre) {
+  const color = (RARITY_MAP[genre.rarity] || RARITY_MAP['MIL-SPEC']).color;
+  const idSeed = genre.id * 17;
+  
+  let shapes = '';
+  if (genre.category === 'GLITCH') {
+    shapes = `
+      <g opacity="0.6" stroke="${color}" stroke-width="1.5" fill="none">
+        <polygon points="120,20 280,20 340,100 280,180 120,180 60,100" stroke-dasharray="8 4"/>
+        <line x1="60" y1="100" x2="340" y2="100" />
+        <rect x="170" y="70" width="60" height="60" fill="${color}" fill-opacity="0.15" stroke="${color}" stroke-width="2"/>
+        <circle cx="200" cy="100" r="15" fill="${color}"/>
+      </g>
+    `;
+  } else if (genre.category === 'RAP' || genre.category === 'PHONK') {
+    shapes = `
+      <g opacity="0.65">
+        <path d="M 40 100 Q 100 20 160 100 T 280 100 T 360 100" fill="none" stroke="${color}" stroke-width="3" />
+        <path d="M 40 100 Q 100 160 160 100 T 280 100 T 360 100" fill="none" stroke="${color}" stroke-width="1.5" stroke-dasharray="4 4" />
+        <circle cx="200" cy="100" r="45" fill="none" stroke="${color}" stroke-width="2" />
+        <polygon points="200,65 230,120 170,120" fill="${color}" fill-opacity="0.25"/>
+      </g>
+    `;
+  } else if (genre.category === 'ROCK') {
+    shapes = `
+      <g opacity="0.6" stroke="${color}" stroke-width="2" fill="none">
+        <polygon points="200,15 225,85 300,90 240,135 260,200 200,160 140,200 160,135 100,90 175,85" />
+        <circle cx="200" cy="108" r="28" stroke="${color}" stroke-width="1" />
+      </g>
+    `;
+  } else if (genre.category === 'INDIE' || genre.category === 'AESTHETIC') {
+    shapes = `
+      <g opacity="0.7">
+        <circle cx="200" cy="95" r="55" fill="none" stroke="${color}" stroke-width="2"/>
+        <path d="M 175 60 A 45 45 0 0 0 225 130 A 40 40 0 0 1 175 60" fill="${color}" fill-opacity="0.3" stroke="${color}"/>
+        <circle cx="150" cy="60" r="3" fill="#fff"/>
+        <circle cx="250" cy="120" r="4" fill="#fff"/>
+        <circle cx="270" cy="70" r="2" fill="#fff"/>
+      </g>
+    `;
+  } else if (genre.category === 'GLOBAL') {
+    shapes = `
+      <g opacity="0.6" stroke="${color}" stroke-width="1.8" fill="none">
+        <circle cx="200" cy="95" r="58" />
+        <circle cx="200" cy="95" r="40" stroke-dasharray="6 3"/>
+        <circle cx="200" cy="95" r="22" fill="${color}" fill-opacity="0.2"/>
+        <line x1="200" y1="20" x2="200" y2="170" />
+        <line x1="125" y1="95" x2="275" y2="95" />
+      </g>
+    `;
+  } else {
+    // ELECTRONIC / BASS
+    shapes = `
+      <g opacity="0.65" stroke="${color}" stroke-width="1.8" fill="none">
+        <rect x="140" y="40" width="120" height="110" rx="8" />
+        <rect x="160" y="55" width="80" height="80" rx="6" stroke-dasharray="4 4"/>
+        <line x1="140" y1="40" x2="260" y2="150" />
+        <line x1="260" y1="40" x2="140" y2="150" />
+        <circle cx="200" cy="95" r="14" fill="${color}" />
+      </g>
+    `;
+  }
+
+  return `
+    <svg viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bgGrad_${idSeed}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${color}" stop-opacity="0.3"/>
+          <stop offset="60%" stop-color="#111624" stop-opacity="0.95"/>
+          <stop offset="100%" stop-color="#07090e" stop-opacity="1"/>
+        </linearGradient>
+        <pattern id="gridPattern_${idSeed}" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#bgGrad_${idSeed})"/>
+      <rect width="100%" height="100%" fill="url(#gridPattern_${idSeed})"/>
+      ${shapes}
+      <text x="385" y="175" text-anchor="end" fill="rgba(255,255,255,0.25)" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="11" letter-spacing="2">${genre.categoryDisplay}</text>
+    </svg>
+  `;
+}
+
 class AudioEngine {
   constructor() { this.ctx = null; this.soundEnabled = true; }
   init() {
@@ -56,7 +142,6 @@ class AudioEngine {
 }
 const audio = new AudioEngine();
 
-// Canvas Particles
 const pCanvas = document.getElementById('particleCanvas'), pCtx = pCanvas.getContext('2d');
 let particles = [];
 function resizeCanvas() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
@@ -129,6 +214,9 @@ function renderDetail(genre, isUnbox = false) {
   document.documentElement.style.setProperty('--active-accent', rInfo.color);
   document.documentElement.style.setProperty('--active-accent-glow', rInfo.glow);
 
+  // Render Procedural SVG Cover Art
+  document.getElementById('proceduralArtSlot').innerHTML = generateProceduralArtwork(genre);
+
   document.getElementById('cardCategory').textContent = genre.categoryDisplay;
   const rPill = document.getElementById('cardRarity');
   rPill.textContent = genre.rarity; rPill.style.color = rInfo.color;
@@ -176,6 +264,7 @@ function setupRouletteTrack() {
   track.innerHTML = '';
   const pool = getFiltered();
   document.getElementById('caseCountBadge').textContent = `${pool.length} GENRES`;
+  
   for (let i = 0; i < 60; i++) {
     const item = pool[Math.floor(Math.random() * pool.length)];
     const rInfo = RARITY_MAP[item.rarity] || RARITY_MAP['MIL-SPEC'];
@@ -186,63 +275,106 @@ function setupRouletteTrack() {
     card.innerHTML = `<span class="roulette-item-cat" style="color:${rInfo.color}">${item.categoryDisplay}</span><span class="roulette-item-title">${item.name}</span><span class="roulette-item-sub">${item.subtag}</span>`;
     track.appendChild(card);
   }
+  
   track.style.transition = 'none';
   const vp = document.getElementById('trackViewport');
   track.style.transform = `translateX(${(vp.clientWidth / 2) - (CARD_WIDTH / 2)}px)`;
 }
 
+/* =========================================================
+   INFINITE SPIN ANIMATION FIX
+   ========================================================= */
 function spinRoulette() {
   if (isSpinning) return;
-  audio.init(); audio.playWhoosh();
+  audio.init();
+  audio.playWhoosh();
   isSpinning = true;
+
   const btn = document.getElementById('openCaseBtn');
   btn.classList.add('spinning');
   btn.querySelector('.open-case-text').textContent = 'UNBOXING...';
 
   const pool = getFiltered();
   const winner = pool[Math.floor(Math.random() * pool.length)];
-  const winIndex = 48;
+  const winIndex = 48; // Target index in reel
 
-  const cards = document.getElementById('rouletteTrack').children;
-  if (cards[winIndex]) {
-    const rInfo = RARITY_MAP[winner.rarity] || RARITY_MAP['MIL-SPEC'];
-    cards[winIndex].style.color = rInfo.color;
-    cards[winIndex].style.borderColor = `${rInfo.color}90`;
-    cards[winIndex].innerHTML = `<span class="roulette-item-cat" style="color:${rInfo.color}">${winner.categoryDisplay}</span><span class="roulette-item-title">${winner.name}</span><span class="roulette-item-sub">${winner.subtag}</span>`;
+  const track = document.getElementById('rouletteTrack');
+  const vp = document.getElementById('trackViewport');
+  const viewportWidth = vp.clientWidth || 400;
+  const initialOffset = (viewportWidth / 2) - (CARD_WIDTH / 2);
+
+  // 1. REBUILD TRACK WITH RANDOM ITEMS + WINNER
+  track.innerHTML = '';
+  for (let i = 0; i < 60; i++) {
+    let item;
+    if (i === 0 && currentGenre) {
+      item = currentGenre;
+    } else if (i === winIndex) {
+      item = winner;
+    } else {
+      item = pool[Math.floor(Math.random() * pool.length)];
+    }
+    const rInfo = RARITY_MAP[item.rarity] || RARITY_MAP['MIL-SPEC'];
+    const card = document.createElement('div');
+    card.className = 'roulette-item-card';
+    card.style.color = rInfo.color;
+    card.style.borderColor = `${rInfo.color}35`;
+    card.innerHTML = `<span class="roulette-item-cat" style="color:${rInfo.color}">${item.categoryDisplay}</span><span class="roulette-item-title">${item.name}</span><span class="roulette-item-sub">${item.subtag}</span>`;
+    track.appendChild(card);
   }
 
-  const vp = document.getElementById('trackViewport');
-  const offset = (Math.random() * 60) - 30;
-  const target = - (winIndex * CARD_WIDTH) + (vp.clientWidth / 2) - (CARD_WIDTH / 2) + offset;
-  const track = document.getElementById('rouletteTrack');
-  track.style.transition = 'transform 5000ms cubic-bezier(0.12, 0.8, 0.2, 1)';
-  track.style.transform = `translateX(${target}px)`;
+  // 2. CRITICAL RESET: Snap back to start position with NO transition
+  track.style.transition = 'none';
+  track.style.transform = `translateX(${initialOffset}px)`;
 
-  const start = Date.now();
-  const interval = setInterval(() => {
-    const elapsed = Date.now() - start;
-    if (elapsed >= 4880) { clearInterval(interval); return; }
-    if (Math.random() < Math.pow(1 - (elapsed/5000), 2) * 1.6) {
-      audio.playTick();
-      if (navigator.vibrate) navigator.vibrate(8);
-    }
-  }, 45);
+  // 3. FORCE DOM REFLOW (Ensures browser registers the reset position)
+  void track.offsetWidth;
 
-  setTimeout(() => {
-    isSpinning = false;
-    btn.classList.remove('spinning');
-    btn.querySelector('.open-case-text').textContent = 'OPEN CASE';
-    if (cards[winIndex]) {
-      cards[winIndex].classList.add('winning-highlight');
-      setTimeout(() => cards[winIndex].classList.remove('winning-highlight'), 1800);
-    }
-    audio.playWin(winner.rarity);
-    if (navigator.vibrate) navigator.vibrate([40, 60, 80]);
-    renderDetail(winner, true);
-    showToast(`🎉 Unboxed: ${winner.name}!`);
-  }, 5100);
+  // 4. TRIGGER SPIN ON NEXT FRAME
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const randomOffset = (Math.random() * 60) - 30;
+      const targetTranslateX = - (winIndex * CARD_WIDTH) + initialOffset + randomOffset;
+      const durationMs = 5000;
+
+      track.style.transition = `transform ${durationMs}ms cubic-bezier(0.12, 0.8, 0.2, 1)`;
+      track.style.transform = `translateX(${targetTranslateX}px)`;
+
+      const startTicking = Date.now();
+      const tickInterval = setInterval(() => {
+        const elapsed = Date.now() - startTicking;
+        if (elapsed >= durationMs - 120) {
+          clearInterval(tickInterval);
+          return;
+        }
+        const progress = elapsed / durationMs;
+        const tickProbability = Math.pow(1 - progress, 2);
+        if (Math.random() < tickProbability * 1.6) {
+          audio.playTick();
+          if (navigator.vibrate) navigator.vibrate(8);
+        }
+      }, 45);
+
+      setTimeout(() => {
+        isSpinning = false;
+        btn.classList.remove('spinning');
+        btn.querySelector('.open-case-text').textContent = 'OPEN CASE';
+        
+        const cards = track.children;
+        if (cards[winIndex]) {
+          cards[winIndex].classList.add('winning-highlight');
+          setTimeout(() => cards[winIndex].classList.remove('winning-highlight'), 1800);
+        }
+        audio.playWin(winner.rarity);
+        if (navigator.vibrate) navigator.vibrate([40, 60, 80]);
+        renderDetail(winner, true);
+        showToast(`🎉 Unboxed: ${winner.name}!`);
+      }, durationMs + 100);
+    });
+  });
 }
 
+// 3D Card Tilt
 const mainCard = document.getElementById('mainGenreCard');
 mainCard.addEventListener('mousemove', (e) => {
   const rect = mainCard.getBoundingClientRect();
@@ -278,6 +410,7 @@ function updateHistoryCounts() {
   document.getElementById('histCount').textContent = historyList.length;
 }
 
+// Bind Controls
 document.getElementById('openCaseBtn').onclick = spinRoulette;
 document.querySelectorAll('.category-chip[data-cat]').forEach(chip => {
   chip.onclick = () => {
