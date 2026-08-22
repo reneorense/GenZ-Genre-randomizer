@@ -1,0 +1,51 @@
+.roll-btn {
+  position: relative;
+  background: #00ffaa;
+  color: #0b0c10;
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 16px 32px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #000, 0 10px 20px rgba(0, 255, 170, 0.35);
+  transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  user-select: none;
+}
+
+.roll-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #000, 0 14px 28px rgba(0, 255, 170, 0.5);
+  background: #1affb2;
+}
+
+.roll-btn:active {
+  transform: translateY(6px);
+  box-shadow: 0 0 0 #000, 0 2px 8px rgba(0, 255, 170, 0.2);
+}
+
+/* Shimmer scanline effect across button */
+.roll-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    rgba(255, 255, 255, 0) 20%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0) 80%
+  );
+  transform: rotate(25deg);
+  animation: sweep 3.5s infinite linear;
+}
+
+@keyframes sweep {
+  0% { left: -70%; }
+  25%, 100% { left: 140%; }
+}
