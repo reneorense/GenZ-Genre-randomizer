@@ -4,467 +4,77 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>GEN Z 100 — Music Genre Roulette</title>
-  <meta name="theme-color" content="#090b10" />
+  <meta name="theme-color" content="#07090e" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-base: #090b10;
-      --bg-card: #151926;
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --text-dim: #6b7280;
-      --card-radius: 18px;
-      --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
-    body {
-      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-      background-color: var(--bg-base);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
-        radial-gradient(circle at 10% 40%, rgba(211, 44, 230, 0.06) 0%, transparent 50%),
-        radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.06) 0%, transparent 50%);
-      background-attachment: fixed;
-    }
-    .app-container {
-      width: 100%;
-      max-width: 480px;
-      padding: 16px 14px 40px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .app-header { display: flex; justify-content: space-between; align-items: center; }
-    .brand-pill {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 0.76rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      box-shadow: 0 0 16px rgba(0, 240, 255, 0.08);
-    }
-    .header-actions { display: flex; gap: 8px; align-items: center; }
-    .icon-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-main);
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      transition: var(--transition-smooth);
-    }
-    .icon-btn:hover { background: rgba(255, 255, 255, 0.12); }
-    .category-scroll {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 4px 2px 8px 2px;
-      scrollbar-width: none;
-    }
-    .category-scroll::-webkit-scrollbar { display: none; }
-    .category-chip {
-      flex-shrink: 0;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: 999px;
-      padding: 6px 13px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-      cursor: pointer;
-      text-transform: uppercase;
-      transition: var(--transition-smooth);
-    }
-    .category-chip.active {
-      background: #ffffff;
-      color: #090b10;
-      border-color: #ffffff;
-      box-shadow: 0 0 14px rgba(255, 255, 255, 0.3);
-    }
-    .genre-card {
-      background: linear-gradient(175deg, #181d2c 0%, #10131d 100%);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--card-radius);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
-      transition: border-color 0.4s ease, box-shadow 0.4s ease;
-    }
-    .card-top-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
-    .tags-group { display: flex; align-items: center; gap: 6px; }
-    .cat-badge {
-      font-size: 0.68rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-muted);
-      border: 1px solid var(--border-subtle);
-    }
-    .rarity-pill {
-      font-size: 0.68rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 3px 9px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .rarity-pill::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: currentColor;
-      box-shadow: 0 0 8px currentColor;
-    }
-    .subtag-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
-    .card-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-    .genre-title { font-size: 1.65rem; font-weight: 800; line-height: 1.15; color: #ffffff; }
-    .card-quick-actions { display: flex; gap: 6px; }
-    .action-square-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition-smooth);
-    }
-    .action-square-btn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
-    .action-square-btn.favorited { color: #ffd700; background: rgba(255, 215, 0, 0.15); border-color: rgba(255, 215, 0, 0.4); }
-    .genre-description { font-size: 0.88rem; line-height: 1.45; color: #d1d5db; }
-    .metadata-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 10px 12px;
-      text-align: center;
-    }
-    .meta-col { display: flex; flex-direction: column; gap: 3px; }
-    .meta-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: var(--text-dim); }
-    .meta-value { font-size: 0.78rem; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .streaming-buttons-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .stream-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: var(--transition-smooth);
-    }
-    .stream-btn.spotify { background: rgba(29, 185, 84, 0.12); border: 1px solid rgba(29, 185, 84, 0.35); color: #1ed760; }
-    .stream-btn.spotify:hover { background: rgba(29, 185, 84, 0.22); box-shadow: 0 0 16px rgba(29, 185, 84, 0.25); }
-    .stream-btn.ytmusic { background: rgba(255, 0, 0, 0.12); border: 1px solid rgba(255, 0, 0, 0.35); color: #ff4e4e; }
-    .stream-btn.ytmusic:hover { background: rgba(255, 0, 0, 0.22); box-shadow: 0 0 16px rgba(255, 0, 0, 0.25); }
-    .stream-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
-    .artists-section {
-      background: linear-gradient(175deg, #151926 0%, #0e111a 100%);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--card-radius);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .artists-header { display: flex; justify-content: space-between; align-items: center; }
-    .section-title { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
-    .section-subtitle { font-size: 0.68rem; color: var(--text-muted); }
-    .artists-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-    .artist-pill {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 7px 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      transition: var(--transition-smooth);
-    }
-    .artist-pill:hover { background: rgba(255, 255, 255, 0.09); transform: translateY(-1px); }
-    .artist-info { display: flex; align-items: center; gap: 6px; overflow: hidden; }
-    .artist-num { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--text-dim); font-weight: 700; }
-    .artist-name { font-size: 0.78rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .artist-arrow { font-size: 0.65rem; color: var(--text-dim); }
-    .mode-switch-wrapper { display: flex; justify-content: center; }
-    .mode-switch {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: 999px;
-      padding: 3px;
-      display: inline-flex;
-      gap: 4px;
-    }
-    .mode-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: var(--transition-smooth);
-    }
-    .mode-btn.active { background: rgba(255, 255, 255, 0.12); color: var(--text-main); }
-    .roulette-container {
-      position: relative;
-      background: #0b0d13;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--card-radius);
-      padding: 16px 0;
-      overflow: hidden;
-      box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.8);
-    }
-    .roulette-indicator-top, .roulette-indicator-bottom {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      width: 0;
-      height: 0;
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
-    }
-    .roulette-indicator-top { top: 4px; border-top: 12px solid #ffffff; }
-    .roulette-indicator-bottom { bottom: 4px; border-bottom: 12px solid #ffffff; }
-    .roulette-track-viewport { width: 100%; overflow: hidden; }
-    .roulette-track { display: flex; gap: 12px; width: max-content; will-change: transform; }
-    .roulette-item-card {
-      width: 160px;
-      height: 110px;
-      background: #151926;
-      border-radius: 12px;
-      border: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 10px;
-      flex-shrink: 0;
-      position: relative;
-    }
-    .roulette-item-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: currentColor; }
-    .roulette-item-cat { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; }
-    .roulette-item-title { font-size: 0.88rem; font-weight: 700; line-height: 1.2; color: #ffffff; }
-    .roulette-item-sub { font-size: 0.65rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .manual-browser {
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      background: #11141d;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--card-radius);
-      padding: 14px;
-      max-height: 340px;
-      overflow-y: auto;
-    }
-    .manual-browser.active { display: flex; }
-    .search-input {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 9px 12px;
-      color: #ffffff;
-      font-size: 0.82rem;
-      outline: none;
-    }
-    .manual-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 10px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: var(--transition-smooth);
-    }
-    .manual-row:hover { background: rgba(255, 255, 255, 0.08); }
-    .manual-row-title { font-size: 0.82rem; font-weight: 600; color: #ffffff; }
-    .manual-row-cat { font-size: 0.65rem; color: var(--text-dim); }
-    .open-case-btn {
-      width: 100%;
-      background: linear-gradient(180deg, #1e2438 0%, #121624 100%);
-      border: 1.5px solid rgba(255, 255, 255, 0.18);
-      border-radius: 999px;
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      cursor: pointer;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-      transition: all 0.2s ease;
-    }
-    .open-case-btn:hover { transform: translateY(-2px); border-color: rgba(255, 255, 255, 0.35); box-shadow: 0 12px 30px rgba(99, 102, 241, 0.25); }
-    .open-case-btn.spinning { pointer-events: none; opacity: 0.7; }
-    .open-case-text { font-size: 0.95rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #ffffff; }
-    .open-case-badge {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 999px;
-      padding: 2px 9px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #d1d5db;
-    }
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(8px);
-      z-index: 100;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-    }
-    .modal-backdrop.active { display: flex; }
-    .modal-sheet {
-      width: 100%;
-      max-width: 480px;
-      background: #141824;
-      border: 1px solid var(--border-subtle);
-      border-radius: 24px 24px 0 0;
-      padding: 20px 20px 36px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; }
-    .modal-title { font-size: 1.1rem; font-weight: 800; color: #ffffff; }
-    .modal-close-btn { background: rgba(255, 255, 255, 0.08); border: none; color: var(--text-muted); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
-    .modal-action-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 12px 16px;
-      color: var(--text-main);
-      text-decoration: none;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition-smooth);
-    }
-    .modal-action-row:hover { background: rgba(255, 255, 255, 0.09); }
-    .toast-pill {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #ffffff;
-      color: #090b10;
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 8px 18px;
-      border-radius: 999px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-      z-index: 200;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      pointer-events: none;
-    }
-    .toast-pill.show { transform: translateX(-50%) translateY(0); }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <canvas id="particleCanvas"></canvas>
+  <div class="ambient-glow-orb" id="ambientOrb"></div>
+
   <div class="app-container">
     <header class="app-header">
-      <div class="brand-pill"><span>⚡ 100 GEN Z GENRES</span></div>
+      <div class="brand-pill"><span class="live-dot"></span><span>100 GEN Z GENRES</span></div>
       <div class="header-actions">
         <button class="icon-btn" id="soundToggleBtn"><span id="soundIcon">🔊</span></button>
-        <button class="icon-btn" id="savedHistoryBtn"><span>⭐ Saved / History</span></button>
+        <button class="icon-btn" id="savedHistoryBtn"><span>⭐ Saved / Vault</span></button>
       </div>
     </header>
 
     <div class="category-scroll" id="categoryScroll">
-      <button class="category-chip active" data-cat="ALL">ALL 100</button>
-      <button class="category-chip" data-cat="GLITCH">GLITCH</button>
-      <button class="category-chip" data-cat="RAP">RAP</button>
-      <button class="category-chip" data-cat="PHONK">PHONK</button>
-      <button class="category-chip" data-cat="INDIE">INDIE</button>
-      <button class="category-chip" data-cat="ROCK">ROCK</button>
-      <button class="category-chip" data-cat="GLOBAL">GLOBAL</button>
-      <button class="category-chip" data-cat="ELECTRONIC">ELECTRONIC</button>
-      <button class="category-chip" data-cat="AESTHETIC">AESTHETIC</button>
+      <button class="category-chip active" data-cat="ALL">ALL <span class="chip-count">(100)</span></button>
+      <button class="category-chip" data-cat="GLITCH">GLITCH <span class="chip-count">(13)</span></button>
+      <button class="category-chip" data-cat="RAP">RAP <span class="chip-count">(13)</span></button>
+      <button class="category-chip" data-cat="PHONK">PHONK <span class="chip-count">(12)</span></button>
+      <button class="category-chip" data-cat="INDIE">INDIE <span class="chip-count">(13)</span></button>
+      <button class="category-chip" data-cat="ROCK">ROCK <span class="chip-count">(12)</span></button>
+      <button class="category-chip" data-cat="GLOBAL">GLOBAL <span class="chip-count">(13)</span></button>
+      <button class="category-chip" data-cat="ELECTRONIC">BASS <span class="chip-count">(13)</span></button>
+      <button class="category-chip" data-cat="AESTHETIC">AESTHETIC <span class="chip-count">(11)</span></button>
     </div>
 
-    <main class="genre-card" id="mainGenreCard">
-      <div class="card-top-row">
-        <div class="tags-group">
-          <span class="cat-badge" id="cardCategory">DIGITAL & GLITCH</span>
-          <span class="rarity-pill" id="cardRarity">CLASSIFIED</span>
+    <div class="card-perspective-wrapper">
+      <main class="genre-card" id="mainGenreCard">
+        <div class="card-top-row">
+          <div class="tags-group">
+            <span class="cat-badge" id="cardCategory">DIGITAL & GLITCH</span>
+            <span class="rarity-pill" id="cardRarity">CLASSIFIED</span>
+          </div>
+          <span class="subtag-label" id="cardSubtag">Industrial Avant</span>
         </div>
-        <span class="subtag-label" id="cardSubtag">Industrial Avant</span>
-      </div>
 
-      <div class="card-title-row">
-        <h1 class="genre-title" id="cardTitle">Deconstructed Club</h1>
-        <div class="card-quick-actions">
-          <button class="action-square-btn" id="favBtn">☆</button>
-          <button class="action-square-btn" id="shareBtn">📤</button>
-          <button class="action-square-btn" id="copyBtn">📋</button>
+        <div class="card-title-row">
+          <h1 class="genre-title" id="cardTitle">Deconstructed Club</h1>
+          <div class="card-quick-actions">
+            <button class="action-square-btn" id="favBtn">☆</button>
+            <button class="action-square-btn" id="shareBtn">📤</button>
+            <button class="action-square-btn" id="copyBtn">📋</button>
+          </div>
         </div>
-      </div>
 
-      <p class="genre-description" id="cardDescription">
-        Avant-garde dance music that tears apart traditional club rhythms into metallic clangs, crystalline textures, and sudden visceral drops.
-      </p>
+        <p class="genre-description" id="cardDescription">
+          Avant-garde dance music that tears apart traditional club rhythms into metallic clangs, crystalline textures, and sudden visceral drops.
+        </p>
 
-      <div class="metadata-grid">
-        <div class="meta-col"><span class="meta-label">Origin</span><span class="meta-value" id="cardOrigin">Berlin / NY</span></div>
-        <div class="meta-col"><span class="meta-label">Peak Era</span><span class="meta-value" id="cardEra">2016–Present</span></div>
-        <div class="meta-col"><span class="meta-label">Energy</span><span class="meta-value" id="cardEnergy">🔥 Avant</span></div>
-      </div>
+        <div class="metadata-grid">
+          <div class="meta-col"><span class="meta-label">Origin</span><span class="meta-value" id="cardOrigin">Berlin / NY</span></div>
+          <div class="meta-col"><span class="meta-label">Peak Era</span><span class="meta-value" id="cardEra">2016–Present</span></div>
+          <div class="meta-col"><span class="meta-label">Energy</span><span class="meta-value" id="cardEnergy">🔥 Avant</span></div>
+        </div>
 
-      <div class="streaming-buttons-row">
-        <a href="#" target="_blank" rel="noopener noreferrer" class="stream-btn spotify" id="spotifyBtn"><span class="stream-dot"></span> Spotify</a>
-        <a href="#" target="_blank" rel="noopener noreferrer" class="stream-btn ytmusic" id="ytmusicBtn"><span class="stream-dot"></span> YouTube Music</a>
-      </div>
-    </main>
+        <div class="streaming-buttons-row">
+          <a href="#" target="_blank" rel="noopener noreferrer" class="stream-btn spotify" id="spotifyBtn"><span class="stream-dot"></span> Spotify</a>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="stream-btn ytmusic" id="ytmusicBtn"><span class="stream-dot"></span> YouTube Music</a>
+        </div>
+      </main>
+    </div>
 
     <section class="artists-section">
       <div class="artists-header">
         <span class="section-title">KEY ARTISTS</span>
-        <span class="section-subtitle">Tap artist to choose streaming</span>
+        <span class="section-subtitle">Tap artist for direct streaming</span>
       </div>
       <div class="artists-grid" id="artistsGrid"></div>
     </section>
@@ -477,6 +87,7 @@
     </div>
 
     <div class="roulette-container" id="rouletteContainer">
+      <div class="roulette-center-laser"></div>
       <div class="roulette-indicator-top"></div>
       <div class="roulette-indicator-bottom"></div>
       <div class="roulette-track-viewport" id="trackViewport">
@@ -499,7 +110,7 @@
     <div class="modal-sheet">
       <div class="modal-header">
         <h3 class="modal-title" id="modalArtistName">Artist</h3>
-        <button class="modal-close-btn" id="closeArtistModal">×</button>
+        <button class="modal-close-btn" id="closeArtistModal">&times;</button>
       </div>
       <div class="modal-actions-list">
         <a href="#" target="_blank" class="modal-action-row" id="modalSpotifyLink"><span>🟢 Search on Spotify</span></a>
@@ -511,14 +122,14 @@
   </div>
 
   <div class="modal-backdrop" id="historyModal">
-    <div class="modal-sheet" style="max-height: 80vh; overflow-y: auto;">
+    <div class="modal-sheet" style="max-height: 82vh; overflow-y: auto;">
       <div class="modal-header">
-        <h3 class="modal-title">Saved & History</h3>
-        <button class="modal-close-btn" id="closeHistoryModal">×</button>
+        <h3 class="modal-title">Genre Vault & History</h3>
+        <button class="modal-close-btn" id="closeHistoryModal">&times;</button>
       </div>
-      <div style="display:flex; gap:8px; margin-bottom:8px;">
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
         <button class="category-chip active" id="tabFavoritesBtn">⭐ Saved (<span id="favCount">0</span>)</button>
-        <button class="category-chip" id="tabRecentBtn">🕒 History (<span id="histCount">0</span>)</button>
+        <button class="category-chip" id="tabRecentBtn">🕒 Unboxed History (<span id="histCount">0</span>)</button>
       </div>
       <div class="manual-list-items" id="historyListItems"></div>
     </div>
@@ -526,270 +137,6 @@
 
   <div class="toast-pill" id="toastPill">Copied to clipboard!</div>
 
-  <script>
-    const RARITY_MAP = {
-      'MIL-SPEC': { color: '#4b69ff', bg: 'rgba(75, 105, 255, 0.15)' },
-      'RESTRICTED': { color: '#8847ff', bg: 'rgba(136, 71, 255, 0.15)' },
-      'CLASSIFIED': { color: '#d32ce6', bg: 'rgba(211, 44, 230, 0.15)' },
-      'COVERT': { color: '#eb4b4b', bg: 'rgba(235, 75, 75, 0.15)' },
-      'EXOTIC / CONTRABAND': { color: '#ffd700', bg: 'rgba(255, 215, 0, 0.18)' }
-    };
-
-    class AudioEngine {
-      constructor() { this.ctx = null; this.soundEnabled = true; }
-      init() {
-        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
-          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
-      }
-      playTick() {
-        if (!this.soundEnabled) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(850 + Math.random() * 150, this.ctx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.035);
-          gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.035);
-          osc.connect(gain); gain.connect(this.ctx.destination);
-          osc.start(); osc.stop(this.ctx.currentTime + 0.04);
-        } catch(e){}
-      }
-      playWin(rarity = 'MIL-SPEC') {
-        if (!this.soundEnabled) return;
-        this.init();
-        if (!this.ctx) return;
-        try {
-          const now = this.ctx.currentTime;
-          const notes = (rarity === 'COVERT' || rarity.includes('EXOTIC')) ? [523, 659, 784, 1046, 1318] : [440, 554, 659, 880];
-          notes.forEach((freq, i) => {
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, now + i * 0.08);
-            gain.gain.setValueAtTime(0.18, now + i * 0.08);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.4);
-            osc.connect(gain); gain.connect(this.ctx.destination);
-            osc.start(now + i * 0.08); osc.stop(now + i * 0.08 + 0.45);
-          });
-        } catch(e){}
-      }
-    }
-    const audio = new AudioEngine();
-
-    let currentCategory = 'ALL';
-    let currentGenre = null;
-    let isSpinning = false;
-    let favorites = JSON.parse(localStorage.getItem('genz_favs') || '[]');
-    let historyList = JSON.parse(localStorage.getItem('genz_hist') || '[]');
-    let currentActiveTab = 'favs';
-    const CARD_WIDTH = 172;
-
-    const GENRES_DATA = [
-      { id: 1, name: "Deconstructed Club", category: "GLITCH", categoryDisplay: "DIGITAL & GLITCH", subtag: "Industrial Avant", rarity: "CLASSIFIED", description: "Avant-garde dance music that tears apart traditional club rhythms into metallic clangs, crystalline textures, and sudden visceral drops.", origin: "Berlin / NY", peakEra: "2016–Present", energy: "🔥 Avant", spotifyQuery: "Deconstructed Club", ytMusicQuery: "Deconstructed Club music", artists: ["Arca", "Amnesia Scanner", "Lotic", "Toxe", "Total Freedom", "Rabit", "Sega Bodega", "Kelela", "Shygirl", "Eartheater"] },
-      { id: 2, name: "Dark Pop", category: "INDIE", categoryDisplay: "INDIE & ALT", subtag: "Menacing Whisper", rarity: "MIL-SPEC", description: "Minor-key, cinematic pop driven by whispering vocal layers, ominous strings, and menacing sub-bass.", origin: "LA / Global", peakEra: "2018–Present", energy: "🖤 Dark", spotifyQuery: "Dark Pop", ytMusicQuery: "Dark pop playlist", artists: ["Billie Eilish", "FINNEAS", "Lorde (Pure Heroine)", "Banks", "Sevdaliza", "Sub Urban", "Melanie Martinez", "Bishop Briggs", "AURORA", "Two Feet"] },
-      { id: 3, name: "Drift Phonk", category: "PHONK", categoryDisplay: "PHONK & DRIFT", subtag: "Cowbell • 160 BPM", rarity: "COVERT", description: "Distorted cowbell melodies, chopped Memphis rap vocals, and thunderous basslines made famous by street racing edits.", origin: "Russia / Internet", peakEra: "2020–Present", energy: "🏎️ Adrenaline Rush", spotifyQuery: "Drift Phonk", ytMusicQuery: "Drift phonk playlist", artists: ["Kordhell", "DVRST", "Pharmacist", "Hensonn", "SXID", "Kaito Shoma", "PlayaPhonk", "Shadxwbxrn", "MUPP", "Dxrk"] },
-      { id: 4, name: "Rage Rap", category: "RAP", categoryDisplay: "RAP & UNDERGROUND", subtag: "Saw-Wave Synth Rhythms", rarity: "COVERT", description: "High-octane trap music defined by pulsating EDM lead synths, distorted 808s, and mosh-pit vocal deliveries.", origin: "Atlanta / Soundcloud", peakEra: "2020–Present", energy: "🔥 High Voltage", spotifyQuery: "Rage Rap", ytMusicQuery: "Rage rap playlist", artists: ["Playboi Carti", "Trippie Redd", "Yeat", "Ken Carson", "Destroy Lonely", "SoFaygo", "Homixide Gang", "Lancey Foux", "Lil Uzi Vert", "SSGKobe"] },
-      { id: 5, name: "Modern P-Pop", category: "GLOBAL", categoryDisplay: "GLOBAL & REGIONAL", subtag: "Pinoy Idol Harmonies & Beats", rarity: "COVERT", description: "Cutting-edge Philippine pop music showcasing world-class vocal agility, traditional Filipino cultural elements, and tight EDM choreography.", origin: "Manila, Philippines", peakEra: "2020–Present", energy: "🇵🇭 High Energy Idol", spotifyQuery: "P-Pop Modern Filipino Pop", ytMusicQuery: "P-Pop songs playlist", artists: ["SB19", "BINI", "Alamat", "BGYO", "VXON", "Press Hit Play", "G22", "KAIA", "YGIG", "Felip (Ken)"] },
-      { id: 6, name: "Brazilian Phonk", category: "PHONK", categoryDisplay: "PHONK & DRIFT", subtag: "Funk Mandelão Bass", rarity: "COVERT", description: "A fiery cross-pollination of Brazilian Baile Funk rhythms and heavy European drift phonk distorted cowbells.", origin: "São Paulo / Global", peakEra: "2022–Present", energy: "🔥 Explosive", spotifyQuery: "Brazilian Phonk", ytMusicQuery: "Brazilian phonk playlist", artists: ["DJ Paulinho PHL", "Slowboy", "Crazy Mano", "Phonkha", "Mc Mazzie", "DJ FKU", "Ariis", "G3OX_EM", "DJ K", "Mu540"] },
-      { id: 7, name: "Midwest Emo Revival", category: "ROCK", categoryDisplay: "ROCK & POST-PUNK", subtag: "Twinkly Telecasters & Screams", rarity: "CLASSIFIED", description: "Mathy open-tuned sparkling guitar arpeggios that build to explosive, voice-cracking emotional choruses.", origin: "American Midwest", peakEra: "2019–Present", energy: "🎸 Twinkly Heartbreak", spotifyQuery: "Midwest Emo", ytMusicQuery: "Midwest emo playlist", artists: ["American Football", "Modern Baseball", "Marietta", "Hot Mulligan", "Mom Jeans.", "Tiny Moving Parts", "Origami Angel", "Free Throw", "The Hotelier", "Foxing"] },
-      { id: 8, name: "Breakcore 2.0", category: "ELECTRONIC", categoryDisplay: "ELECTRONIC & BASS", subtag: "Frenetic Sliced Breaks", rarity: "CLASSIFIED", description: "Ultra-fast, micro-sliced Amen break patterns intertwined with melancholic anime melodies and emotional synth washes.", origin: "Internet / Australia", peakEra: "2020–Present", energy: "🌪️ Manic Melancholy", spotifyQuery: "Breakcore", ytMusicQuery: "Breakcore mix", artists: ["Sewerslvt", "Machine Girl", "Venetian Snares", "Igorrr", "Goreshit", "Loli in early 20s", "Nedaj", "Tokyopill", "Metaroom", "Replicant"] },
-      { id: 9, name: "Hyperpop", category: "GLITCH", categoryDisplay: "DIGITAL & GLITCH", subtag: "Maximalist Sugar Rush", rarity: "COVERT", description: "Exaggerated high-velocity pop combining pitch-shifted vocal hooks, abrasive synth distortion, and playful metallic design.", origin: "London / Internet", peakEra: "2018–Present", energy: "⚡ Hyper", spotifyQuery: "Hyperpop", ytMusicQuery: "Hyperpop playlist", artists: ["SOPHIE", "Charli xcx", "100 gecs", "A. G. Cook", "Dorian Electra", "Hannah Diamond", "Dylan Brady", "Slayyyter", "Namo", "Danny L Harle"] },
-      { id: 10, name: "Amapiano", category: "GLOBAL", categoryDisplay: "GLOBAL & REGIONAL", subtag: "The Iconic Log Drum", rarity: "COVERT", description: "South African deep house hybrid propelled by deep resonant log drum basslines, lush jazz keyboards, and infectious percussion.", origin: "Pretoria / Johannesburg, SA", peakEra: "2019–Present", energy: "🌍 Hypnotic Log Drum", spotifyQuery: "Amapiano", ytMusicQuery: "Amapiano playlist", artists: ["Kabza De Small", "DJ Maphorisa", "Uncle Waffles", "Focalistic", "Major League DJz", "Kelvin Momo", "Tyler ICU", "DBN Gogo", "Kamo Mphela", "Young Stunna"] }
-      /* Note: You can expand this array with all 100 curated genres from your database */
-    ];
-
-    function getFilteredGenres() {
-      return currentCategory === 'ALL' ? GENRES_DATA : GENRES_DATA.filter(g => g.category === currentCategory);
-    }
-
-    function renderGenreDetail(genre, addToHistory = true) {
-      currentGenre = genre;
-      const rarityInfo = RARITY_MAP[genre.rarity] || RARITY_MAP['MIL-SPEC'];
-      document.getElementById('cardCategory').textContent = genre.categoryDisplay;
-      const rPill = document.getElementById('cardRarity');
-      rPill.textContent = genre.rarity;
-      rPill.style.color = rarityInfo.color;
-      rPill.style.backgroundColor = rarityInfo.bg;
-      rPill.style.boxShadow = `0 0 12px ${rarityInfo.color}40`;
-      document.getElementById('cardSubtag').textContent = genre.subtag;
-      document.getElementById('cardTitle').textContent = genre.name;
-      document.getElementById('cardDescription').textContent = genre.description;
-      document.getElementById('cardOrigin').textContent = genre.origin;
-      document.getElementById('cardEra').textContent = genre.peakEra;
-      document.getElementById('cardEnergy').textContent = genre.energy;
-      
-      const card = document.getElementById('mainGenreCard');
-      card.style.borderColor = `${rarityInfo.color}50`;
-      card.style.boxShadow = `0 12px 36px rgba(0,0,0,0.6), 0 0 24px ${rarityInfo.color}18`;
-      
-      document.getElementById('spotifyBtn').href = `https://open.spotify.com/search/${encodeURIComponent(genre.spotifyQuery)}`;
-      document.getElementById('ytmusicBtn').href = `https://music.youtube.com/search?q=${encodeURIComponent(genre.ytMusicQuery)}`;
-
-      const grid = document.getElementById('artistsGrid');
-      grid.innerHTML = '';
-      genre.artists.forEach((artist, idx) => {
-        const pill = document.createElement('div');
-        pill.className = 'artist-pill';
-        pill.innerHTML = `<div class="artist-info"><span class="artist-num">${String(idx+1).padStart(2,'0')}</span><span class="artist-name">${artist}</span></div><span class="artist-arrow">▾</span>`;
-        pill.onclick = () => openArtistPopover(artist);
-        grid.appendChild(pill);
-      });
-
-      const favBtn = document.getElementById('favBtn');
-      favBtn.textContent = favorites.includes(genre.id) ? '★' : '☆';
-      favBtn.classList.toggle('favorited', favorites.includes(genre.id));
-
-      if (addToHistory) {
-        historyList = [genre.id, ...historyList.filter(id => id !== genre.id)].slice(0, 50);
-        localStorage.setItem('genz_hist', JSON.stringify(historyList));
-        updateHistoryCounts();
-      }
-    }
-
-    function setupRouletteTrack() {
-      const track = document.getElementById('rouletteTrack');
-      track.innerHTML = '';
-      const pool = getFilteredGenres();
-      document.getElementById('caseCountBadge').textContent = `${pool.length} GENRES`;
-      for (let i = 0; i < 60; i++) {
-        const item = pool[Math.floor(Math.random() * pool.length)];
-        const rInfo = RARITY_MAP[item.rarity] || RARITY_MAP['MIL-SPEC'];
-        const c = document.createElement('div');
-        c.className = 'roulette-item-card';
-        c.style.color = rInfo.color;
-        c.style.borderColor = `${rInfo.color}35`;
-        c.innerHTML = `<span class="roulette-item-cat" style="color:${rInfo.color}">${item.categoryDisplay}</span><span class="roulette-item-title">${item.name}</span><span class="roulette-item-sub">${item.subtag}</span>`;
-        track.appendChild(c);
-      }
-      const viewport = document.getElementById('trackViewport');
-      track.style.transition = 'none';
-      track.style.transform = `translateX(${(viewport.clientWidth/2) - (CARD_WIDTH/2)}px)`;
-    }
-
-    function spinRoulette() {
-      if (isSpinning) return;
-      audio.init();
-      isSpinning = true;
-      const btn = document.getElementById('openCaseBtn');
-      btn.classList.add('spinning');
-      btn.querySelector('.open-case-text').textContent = 'UNBOXING...';
-
-      const pool = getFilteredGenres();
-      const winner = pool[Math.floor(Math.random() * pool.length)];
-      const winIndex = 48;
-
-      const cards = document.getElementById('rouletteTrack').children;
-      if (cards[winIndex]) {
-        const rInfo = RARITY_MAP[winner.rarity] || RARITY_MAP['MIL-SPEC'];
-        cards[winIndex].style.color = rInfo.color;
-        cards[winIndex].style.borderColor = `${rInfo.color}90`;
-        cards[winIndex].innerHTML = `<span class="roulette-item-cat" style="color:${rInfo.color}">${winner.categoryDisplay}</span><span class="roulette-item-title">${winner.name}</span><span class="roulette-item-sub">${winner.subtag}</span>`;
-      }
-
-      const viewport = document.getElementById('trackViewport');
-      const offset = (Math.random() * 60) - 30;
-      const target = -(winIndex * CARD_WIDTH) + (viewport.clientWidth / 2) - (CARD_WIDTH / 2) + offset;
-      const track = document.getElementById('rouletteTrack');
-      track.style.transition = 'transform 5000ms cubic-bezier(0.12, 0.8, 0.2, 1)';
-      track.style.transform = `translateX(${target}px)`;
-
-      const start = Date.now();
-      const interval = setInterval(() => {
-        const elapsed = Date.now() - start;
-        if (elapsed >= 4850) { clearInterval(interval); return; }
-        if (Math.random() < Math.pow(1 - (elapsed/5000), 2) * 1.5) {
-          audio.playTick();
-          if (navigator.vibrate) navigator.vibrate(8);
-        }
-      }, 45);
-
-      setTimeout(() => {
-        isSpinning = false;
-        btn.classList.remove('spinning');
-        btn.querySelector('.open-case-text').textContent = 'OPEN CASE';
-        audio.playWin(winner.rarity);
-        if (navigator.vibrate) navigator.vibrate([30, 50, 60]);
-        renderGenreDetail(winner, true);
-        showToast(`🎉 Unboxed: ${winner.name}!`);
-      }, 5100);
-    }
-
-    function openArtistPopover(name) {
-      document.getElementById('modalArtistName').textContent = name;
-      document.getElementById('modalSpotifyLink').href = `https://open.spotify.com/search/${encodeURIComponent(name)}`;
-      document.getElementById('modalYtMusicLink').href = `https://music.youtube.com/search?q=${encodeURIComponent(name)}`;
-      document.getElementById('modalYoutubeLink').href = `https://www.youtube.com/results?search_query=${encodeURIComponent(name + ' music')}`;
-      document.getElementById('modalCopyArtistBtn').onclick = () => {
-        navigator.clipboard.writeText(name).then(() => {
-          showToast(`Copied ${name}!`);
-          document.getElementById('artistModal').classList.remove('active');
-        });
-      };
-      document.getElementById('artistModal').classList.add('active');
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById('toastPill');
-      t.textContent = msg;
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2000);
-    }
-
-    function updateHistoryCounts() {
-      document.getElementById('favCount').textContent = favorites.length;
-      document.getElementById('histCount').textContent = historyList.length;
-    }
-
-    // Event Bindings
-    document.getElementById('openCaseBtn').onclick = spinRoulette;
-    document.querySelectorAll('.category-chip[data-cat]').forEach(chip => {
-      chip.onclick = () => {
-        if (isSpinning) return;
-        document.querySelectorAll('.category-chip[data-cat]').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        currentCategory = chip.getAttribute('data-cat');
-        setupRouletteTrack();
-      };
-    });
-
-    document.getElementById('favBtn').onclick = () => {
-      if (!currentGenre) return;
-      if (favorites.includes(currentGenre.id)) {
-        favorites = favorites.filter(id => id !== currentGenre.id);
-        showToast('Removed from Saved');
-      } else {
-        favorites.push(currentGenre.id);
-        showToast('Saved to Favorites ⭐');
-      }
-      localStorage.setItem('genz_favs', JSON.stringify(favorites));
-      document.getElementById('favBtn').textContent = favorites.includes(currentGenre.id) ? '★' : '☆';
-      document.getElementById('favBtn').classList.toggle('favorited', favorites.includes(currentGenre.id));
-      updateHistoryCounts();
-    };
-
-    document.getElementById('copyBtn').onclick = () => {
-      if (!currentGenre) return;
-      navigator.clipboard.writeText(`⚡ ${currentGenre.name} (${currentGenre.categoryDisplay})\n${currentGenre.description}\nOrigin: ${currentGenre.origin} \vert{} Era:${currentGenre.peakEra} | Energy: ${currentGenre.energy}\nTop Artists:${currentGenre.artists.slice(0, 5).join(', ')}`);
-      showToast('📋 Copied genre card info!');
-    };
-
-    document.getElementById('soundToggleBtn').onclick = () => {
-      audio.soundEnabled = !audio.soundEnabled;
-      document.getElementById('soundIcon').textContent = audio.soundEnabled ? '🔊' : '🔇';
-      showToast(audio.soundEnabled ? 'Sound Enabled' : 'Sound Muted');
-    };
-
-    document.getElementById('closeArtistModal').onclick = () => document.getElementById('artistModal').classList.remove('active');
-
-    // Init
-    setupRouletteTrack();
-    renderGenreDetail(GENRES_DATA[0], false);
-    updateHistoryCounts();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
