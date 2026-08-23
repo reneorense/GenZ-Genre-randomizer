@@ -7,7 +7,7 @@ const RARITY_MAP = {
 };
 
 /* =========================================================
-   PROCEDURAL SVG ARTWORK GENERATOR (OPTION 2)
+   PROCEDURAL SVG ARTWORK GENERATOR
    ========================================================= */
 function generateProceduralArtwork(genre) {
   const color = (RARITY_MAP[genre.rarity] || RARITY_MAP['MIL-SPEC']).color;
@@ -142,6 +142,7 @@ class AudioEngine {
 }
 const audio = new AudioEngine();
 
+// Canvas Particles
 const pCanvas = document.getElementById('particleCanvas'), pCtx = pCanvas.getContext('2d');
 let particles = [];
 function resizeCanvas() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
@@ -214,10 +215,9 @@ function renderDetail(genre, isUnbox = false) {
   document.documentElement.style.setProperty('--active-accent', rInfo.color);
   document.documentElement.style.setProperty('--active-accent-glow', rInfo.glow);
 
-  // Render Procedural SVG Cover Art
   document.getElementById('proceduralArtSlot').innerHTML = generateProceduralArtwork(genre);
-
   document.getElementById('cardCategory').textContent = genre.categoryDisplay;
+  
   const rPill = document.getElementById('cardRarity');
   rPill.textContent = genre.rarity; rPill.style.color = rInfo.color;
   rPill.style.backgroundColor = rInfo.bg; rPill.style.boxShadow = `0 0 14px ${rInfo.glow}`;
@@ -282,7 +282,7 @@ function setupRouletteTrack() {
 }
 
 /* =========================================================
-   INFINITE SPIN ANIMATION FIX
+   INFINITE SPIN ANIMATION ENGINE
    ========================================================= */
 function spinRoulette() {
   if (isSpinning) return;
@@ -303,7 +303,7 @@ function spinRoulette() {
   const viewportWidth = vp.clientWidth || 400;
   const initialOffset = (viewportWidth / 2) - (CARD_WIDTH / 2);
 
-  // 1. REBUILD TRACK WITH RANDOM ITEMS + WINNER
+  // 1. Rebuild track with fresh pool items
   track.innerHTML = '';
   for (let i = 0; i < 60; i++) {
     let item;
@@ -323,14 +323,14 @@ function spinRoulette() {
     track.appendChild(card);
   }
 
-  // 2. CRITICAL RESET: Snap back to start position with NO transition
+  // 2. Snap to start position with NO transition
   track.style.transition = 'none';
   track.style.transform = `translateX(${initialOffset}px)`;
 
-  // 3. FORCE DOM REFLOW (Ensures browser registers the reset position)
+  // 3. Force DOM Reflow
   void track.offsetWidth;
 
-  // 4. TRIGGER SPIN ON NEXT FRAME
+  // 4. Trigger spin on next frame
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const randomOffset = (Math.random() * 60) - 30;
@@ -374,16 +374,28 @@ function spinRoulette() {
   });
 }
 
-// 3D Card Tilt
-const mainCard = document.getElementById('mainGenreCard');
-mainCard.addEventListener('mousemove', (e) => {
-  const rect = mainCard.getBoundingClientRect();
-  const x = e.clientX - rect.left, y = e.clientY - rect.top;
-  const rotX = ((y - rect.height/2) / (rect.height/2)) * -6;
-  const rotY = ((x - rect.width/2) / (rect.width/2)) * 6;
-  mainCard.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-});
-mainCard.addEventListener('mouseleave', () => mainCard.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)');
+/* =========================================================
+   COLLAPSIBLE ACCORDION HANDLERS
+   ========================================================= */
+const genreCardHeader = document.getElementById('genreCardHeader');
+const genreAccordionDrawer = document.getElementById('genreAccordionDrawer');
+const genreChevron = document.getElementById('genreChevron');
+
+genreCardHeader.onclick = () => {
+  const isExpanded = genreAccordionDrawer.classList.toggle('expanded');
+  genreChevron.classList.toggle('rotated', isExpanded);
+};
+
+const artistsHeader = document.getElementById('artistsHeader');
+const artistsAccordionDrawer = document.getElementById('artistsAccordionDrawer');
+const artistsChevron = document.getElementById('artistsChevron');
+const artistsToggleText = document.getElementById('artistsToggleText');
+
+artistsHeader.onclick = () => {
+  const isExpanded = artistsAccordionDrawer.classList.toggle('expanded');
+  artistsChevron.classList.toggle('rotated', isExpanded);
+  artistsToggleText.textContent = isExpanded ? 'Tap to hide' : 'Tap to view';
+};
 
 function openArtistPopover(name) {
   document.getElementById('modalArtistName').textContent = name;
@@ -450,6 +462,119 @@ document.getElementById('soundToggleBtn').onclick = () => {
 };
 
 document.getElementById('closeArtistModal').onclick = () => document.getElementById('artistModal').classList.remove('active');
+
+// Mode Switch
+document.getElementById('rouletteModeBtn').onclick = () => {
+  document.getElementById('rouletteModeBtn').classList.add('active');
+  document.getElementById('manualModeBtn').classList.remove('active');
+  document.getElementById('rouletteContainer').style.display = 'block';
+  document.getElementById('manualBrowser').classList.remove('active');
+};
+
+document.getElementById('manualModeBtn').onclick = () => {
+  document.getElementById('manualModeBtn').classList.add('active');
+  document.getElementById('rouletteModeBtn').classList.remove('active');
+  document.getElementById('rouletteContainer').style.display = 'none';
+  document.getElementById('manualBrowser').classList.add('active');
+  renderManualList();
+};
+
+function renderManualList(query = '') {
+  const manualListItems = document.getElementById('manualListItems');
+  manualListItems.innerHTML = '';
+  const pool = getFiltered();
+  const filtered = pool.filter(g => {
+    if (!query) return true;
+    const q = query.toLowerCase();
+    return g.name.toLowerCase().includes(q) ||
+           g.subtag.toLowerCase().includes(q) ||
+           g.description.toLowerCase().includes(q) ||
+           g.artists.some(a => a.toLowerCase().includes(q));
+  });
+
+  if (filtered.length === 0) {
+    manualListItems.innerHTML = '<div style="color:var(--text-dim); text-align:center; padding:16px; font-size:0.8rem;">No genres found.</div>';
+    return;
+  }
+
+  filtered.forEach(item => {
+    const rInfo = RARITY_MAP[item.rarity] || RARITY_MAP['MIL-SPEC'];
+    const row = document.createElement('div');
+    row.className = 'manual-row';
+    row.innerHTML = `
+      <div>
+        <div class="manual-row-title">${item.name}</div>
+        <div class="manual-row-cat">${item.categoryDisplay} • ${item.subtag}</div>
+      </div>
+      <span style="font-size:0.7rem; font-weight:700; color:${rInfo.color}">${item.rarity}</span>
+    `;
+    row.onclick = () => {
+      renderDetail(item, true);
+      showToast(`Selected ${item.name}`);
+    };
+    manualListItems.appendChild(row);
+  });
+}
+
+document.getElementById('genreSearchInput').oninput = (e) => {
+  renderManualList(e.target.value);
+};
+
+// Vault Modal
+document.getElementById('savedHistoryBtn').onclick = () => {
+  renderHistoryModal();
+  document.getElementById('historyModal').classList.add('active');
+};
+document.getElementById('closeHistoryModal').onclick = () => document.getElementById('historyModal').classList.remove('active');
+document.getElementById('historyModal').onclick = (e) => {
+  if (e.target === document.getElementById('historyModal')) document.getElementById('historyModal').classList.remove('active');
+};
+
+document.getElementById('tabFavoritesBtn').onclick = () => {
+  currentActiveTab = 'favs';
+  document.getElementById('tabFavoritesBtn').classList.add('active');
+  document.getElementById('tabRecentBtn').classList.remove('active');
+  renderHistoryModal();
+};
+document.getElementById('tabRecentBtn').onclick = () => {
+  currentActiveTab = 'hist';
+  document.getElementById('tabRecentBtn').classList.add('active');
+  document.getElementById('tabFavoritesBtn').classList.remove('active');
+  renderHistoryModal();
+};
+
+function renderHistoryModal() {
+  updateHistoryCounts();
+  const listContainer = document.getElementById('historyListItems');
+  listContainer.innerHTML = '';
+  const ids = currentActiveTab === 'favs' ? favorites : historyList;
+
+  if (ids.length === 0) {
+    listContainer.innerHTML = `<div style="color:var(--text-dim); text-align:center; padding:20px; font-size:0.84rem;">No items in ${currentActiveTab === 'favs' ? 'Favorites' : 'History'} yet.</div>`;
+    return;
+  }
+
+  ids.forEach(id => {
+    const item = GENRES_DATA.find(g => g.id === id);
+    if (!item) return;
+    const rInfo = RARITY_MAP[item.rarity] || RARITY_MAP['MIL-SPEC'];
+    const row = document.createElement('div');
+    row.className = 'manual-row';
+    row.innerHTML = `
+      <div>
+        <div class="manual-row-title">${item.name}</div>
+        <div class="manual-row-cat">${item.categoryDisplay} • ${item.energy}</div>
+      </div>
+      <span style="font-size:0.7rem; font-weight:700; color:${rInfo.color}">${item.rarity}</span>
+    `;
+    row.onclick = () => {
+      renderDetail(item, false);
+      document.getElementById('historyModal').classList.remove('active');
+      showToast(`Loaded ${item.name}`);
+    };
+    listContainer.appendChild(row);
+  });
+}
 
 // Init
 setupRouletteTrack();
