@@ -15,14 +15,16 @@
   <div class="ambient-glow-orb" id="ambientOrb"></div>
 
   <div class="app-container">
+    <!-- TOP HEADER -->
     <header class="app-header">
       <div class="brand-pill"><span class="live-dot"></span><span>100 GEN Z GENRES</span></div>
       <div class="header-actions">
         <button class="icon-btn" id="soundToggleBtn"><span id="soundIcon">🔊</span></button>
-        <button class="icon-btn" id="savedHistoryBtn"><span>⭐ Saved / Vault</span></button>
+        <button class="icon-btn" id="savedHistoryBtn"><span>⭐ Vault</span></button>
       </div>
     </header>
 
+    <!-- CATEGORY FILTER CHIPS -->
     <div class="category-scroll" id="categoryScroll">
       <button class="category-chip active" data-cat="ALL">ALL <span class="chip-count">(100)</span></button>
       <button class="category-chip" data-cat="GLITCH">GLITCH <span class="chip-count">(13)</span></button>
@@ -35,56 +37,82 @@
       <button class="category-chip" data-cat="AESTHETIC">AESTHETIC <span class="chip-count">(11)</span></button>
     </div>
 
+    <!-- 1. COLLAPSIBLE SELECTED GENRE CARD -->
     <div class="card-perspective-wrapper">
       <main class="genre-card" id="mainGenreCard">
-        <!-- Procedural Vector Artwork -->
-        <div class="genre-art-container" id="genreArtContainer">
-          <div id="proceduralArtSlot" class="genre-art-wrapper"></div>
-          <div class="art-overlay-gradient"></div>
-        </div>
-
-        <div class="card-top-row">
-          <div class="tags-group">
-            <span class="cat-badge" id="cardCategory">DIGITAL & GLITCH</span>
-            <span class="rarity-pill" id="cardRarity">CLASSIFIED</span>
+        <!-- Always Visible Header (Tap to Expand/Collapse) -->
+        <div class="card-header-bar" id="genreCardHeader" title="Tap to expand/collapse details">
+          <div class="card-top-row">
+            <div class="tags-group">
+              <span class="cat-badge" id="cardCategory">DIGITAL & GLITCH</span>
+              <span class="rarity-pill" id="cardRarity">CLASSIFIED</span>
+            </div>
+            <span class="subtag-label" id="cardSubtag">Industrial Avant</span>
           </div>
-          <span class="subtag-label" id="cardSubtag">Industrial Avant</span>
-        </div>
 
-        <div class="card-title-row">
-          <h1 class="genre-title" id="cardTitle">Deconstructed Club</h1>
-          <div class="card-quick-actions">
-            <button class="action-square-btn" id="favBtn">☆</button>
-            <button class="action-square-btn" id="shareBtn">📤</button>
-            <button class="action-square-btn" id="copyBtn">📋</button>
+          <div class="card-title-row">
+            <div class="title-and-chevron">
+              <h1 class="genre-title" id="cardTitle">Deconstructed Club</h1>
+              <span class="expand-chevron" id="genreChevron">▾</span>
+            </div>
+            <div class="card-quick-actions" onclick="event.stopPropagation();">
+              <button class="action-square-btn" id="favBtn" title="Favorite">☆</button>
+              <button class="action-square-btn" id="shareBtn" title="Share">📤</button>
+              <button class="action-square-btn" id="copyBtn" title="Copy Info">📋</button>
+            </div>
           </div>
         </div>
 
-        <p class="genre-description" id="cardDescription">
-          Avant-garde dance music that tears apart traditional club rhythms into metallic clangs, crystalline textures, and sudden visceral drops.
-        </p>
+        <!-- Collapsible Details Body -->
+        <div class="accordion-drawer" id="genreAccordionDrawer">
+          <div class="accordion-inner">
+            <div class="genre-art-container" id="genreArtContainer">
+              <div id="proceduralArtSlot" class="genre-art-wrapper"></div>
+              <div class="art-overlay-gradient"></div>
+            </div>
 
-        <div class="metadata-grid">
-          <div class="meta-col"><span class="meta-label">Origin</span><span class="meta-value" id="cardOrigin">Berlin / NY</span></div>
-          <div class="meta-col"><span class="meta-label">Peak Era</span><span class="meta-value" id="cardEra">2016–Present</span></div>
-          <div class="meta-col"><span class="meta-label">Energy</span><span class="meta-value" id="cardEnergy">🔥 Avant</span></div>
-        </div>
+            <p class="genre-description" id="cardDescription">
+              Avant-garde dance music that tears apart traditional club rhythms into metallic clangs, crystalline textures, and sudden visceral drops.
+            </p>
 
-        <div class="streaming-buttons-row">
-          <a href="#" target="_blank" rel="noopener noreferrer" class="stream-btn spotify" id="spotifyBtn"><span class="stream-dot"></span> Spotify</a>
-          <a href="#" target="_blank" rel="noopener noreferrer" class="stream-btn ytmusic" id="ytmusicBtn"><span class="stream-dot"></span> YouTube Music</a>
+            <div class="metadata-grid">
+              <div class="meta-col"><span class="meta-label">Origin</span><span class="meta-value" id="cardOrigin">Berlin / NY</span></div>
+              <div class="meta-col"><span class="meta-label">Peak Era</span><span class="meta-value" id="cardEra">2016–Present</span></div>
+              <div class="meta-col"><span class="meta-label">Energy</span><span class="meta-value" id="cardEnergy">🔥 Avant</span></div>
+            </div>
+
+            <div class="streaming-buttons-row">
+              <a href="#" target="_blank" rel="noopener noreferrer" class="stream-btn spotify" id="spotifyBtn"><span class="stream-dot"></span> Spotify</a>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="stream-btn ytmusic" id="ytmusicBtn"><span class="stream-dot"></span> YouTube Music</a>
+            </div>
+          </div>
         </div>
       </main>
     </div>
 
-    <section class="artists-section">
-      <div class="artists-header">
-        <span class="section-title">KEY ARTISTS</span>
-        <span class="section-subtitle">Tap artist for direct streaming</span>
+    <!-- 2. COLLAPSIBLE KEY ARTISTS SECTION -->
+    <section class="artists-section" id="artistsSection">
+      <!-- Always Visible Bar (Tap to Expand/Collapse) -->
+      <div class="artists-header" id="artistsHeader" title="Tap to view 10 key artists">
+        <div class="artists-header-left">
+          <span class="section-title">KEY ARTISTS</span>
+          <span class="artist-count-badge">10 ARTISTS</span>
+        </div>
+        <div class="artists-header-right">
+          <span class="section-subtitle" id="artistsToggleText">Tap to view</span>
+          <span class="expand-chevron" id="artistsChevron">▾</span>
+        </div>
       </div>
-      <div class="artists-grid" id="artistsGrid"></div>
+
+      <!-- Collapsible Grid Body -->
+      <div class="accordion-drawer" id="artistsAccordionDrawer">
+        <div class="accordion-inner">
+          <div class="artists-grid" id="artistsGrid"></div>
+        </div>
+      </div>
     </section>
 
+    <!-- 3. MODE SELECTOR -->
     <div class="mode-switch-wrapper">
       <div class="mode-switch">
         <button class="mode-btn active" id="rouletteModeBtn">🎲 Auto (Roulette)</button>
@@ -92,6 +120,7 @@
       </div>
     </div>
 
+    <!-- 4. CS:GO 2.0 HORIZONTAL ROULETTE CAROUSEL -->
     <div class="roulette-container" id="rouletteContainer">
       <div class="roulette-center-laser"></div>
       <div class="roulette-indicator-top"></div>
@@ -101,17 +130,20 @@
       </div>
     </div>
 
+    <!-- MANUAL SELECTOR BROWSER -->
     <div class="manual-browser" id="manualBrowser">
       <input type="text" class="search-input" id="genreSearchInput" placeholder="🔍 Search among 100 genres or artists..." />
       <div class="manual-list-items" id="manualListItems"></div>
     </div>
 
+    <!-- 5. MAIN ACTION UNBOX BUTTON -->
     <button class="open-case-btn" id="openCaseBtn">
       <span class="open-case-text">OPEN CASE</span>
       <span class="open-case-badge" id="caseCountBadge">100 GENRES</span>
     </button>
   </div>
 
+  <!-- ARTIST ACTION MODAL -->
   <div class="modal-backdrop" id="artistModal">
     <div class="modal-sheet">
       <div class="modal-header">
@@ -127,6 +159,7 @@
     </div>
   </div>
 
+  <!-- SAVED / VAULT MODAL -->
   <div class="modal-backdrop" id="historyModal">
     <div class="modal-sheet" style="max-height: 82vh; overflow-y: auto;">
       <div class="modal-header">
