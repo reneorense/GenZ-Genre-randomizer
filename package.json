@@ -1,1 +1,0 @@
-{"name":"genz-discovery","version":"2.0.0","private":true,"type":"module","engines":{"node":">=20"},"scripts":{"dev":"node scripts/serve.mjs","build":"node scripts/build.mjs","preview":"node scripts/serve.mjs dist","test":"node --test tests/*.test.js"}}
