@@ -26,3 +26,6 @@ Quick reveal skips shuffle animation. System reduced-motion preferences are resp
 
 ## Validation
 Browser checked on desktop and in 390px / 320px viewport frames. Exercised shuffle, saved crate, search/no-results and mobile return-and-shuffle. Checked local references and JavaScript syntax. Physical-device and external music-service playback testing were not performed.
+
+## Sonic Vault 4.0.1 — draggable discovery carousel
+Restores all 100 original genres and retains Midwest Emo Revival (101 total; 1,010 inherited artist entries). Existing IDs 1–10 are preserved; Breakcore 2.0 is restored as Breakcore Revival under ID 8. Artist entries are not verified current rankings; duplicate/alias corrections require editorial review. Swipe, drag, flick, keyboard arrows or Random Spin. Touch interrupts a moving roulette; inertia and snap use one selection engine. CSS 3D geometry is dependency-free; WebGL/Three.js and physical Android testing are future work. Artist links are search destinations, not verified artist IDs. Existing local crate/history and share links remain. Category/search changes select the first eligible result if needed. No account or API keys required.
