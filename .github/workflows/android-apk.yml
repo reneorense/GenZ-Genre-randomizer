@@ -1,0 +1,44 @@
+name: Build Sonic Vault Android APK
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', 'src/**', 'public/**', 'index.html', 'tests/**', '.github/workflows/android-apk.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check catalog and roulette math
+        run: node --test tests/vault.test.mjs
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Android SDK
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Build signed test APK
+        run: gradle -p android :app:assembleDebug --no-daemon
+      - name: Verify packaged assets and signing
+        run: |
+          mkdir -p apk-output
+          cp android/app/build/outputs/apk/debug/app-debug.apk apk-output/Sonic-Vault-4.0.1.apk
+          unzip -l apk-output/Sonic-Vault-4.0.1.apk | grep 'assets/src/data/genres.js'
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs apk-output/Sonic-Vault-4.0.1.apk
+          cd apk-output
+          sha256sum Sonic-Vault-4.0.1.apk > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Sonic-Vault-4.0.1-Android
+          path: apk-output/
+          if-no-files-found: error
+          retention-days: 30
